@@ -25,11 +25,14 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView textView;
     private Button button;
+    private StringBuilder log;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        log = new StringBuilder();
 
         textView = (TextView) findViewById(R.id.textView);
         button = (Button) findViewById(R.id.runButton);
@@ -97,7 +100,8 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void printLog(String log) {
-        textView.setText(textView.getText().toString() + log + "\n\n");
+    private void printLog(String text) {
+        log.append(text).append("\n\n");
+        textView.setText(log.toString());
     }
 }
