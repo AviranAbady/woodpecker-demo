@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import org.aviran.woodpecker.Woodpecker;
@@ -23,6 +24,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private TextView textView;
+    private Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,11 +32,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         textView = (TextView) findViewById(R.id.textView);
-
-        findViewById(R.id.runButton).setOnClickListener(new View.OnClickListener() {
+        button = (Button) findViewById(R.id.runButton);
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 textView.setText("");
+                button.setEnabled(false);
                 runDemo();
             }
         });
@@ -82,12 +85,14 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(String response) {
                         printLog("Review request successful, response is:\n" + response);
+                        button.setEnabled(true);
                     }
                 })
                 .error(new WoodpeckerError() {
                     @Override
                     public void onError(WoodpeckerResponse response) {
                         Log.e("WP", "ERROR");
+                        button.setEnabled(true);
                     }
                 });
     }
