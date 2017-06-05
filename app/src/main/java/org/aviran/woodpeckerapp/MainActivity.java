@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
             public void onProgress(String name, int progress, int totalSize) {
                 int prog = 100*progress/totalSize;
                 progressBar.setProgress(prog);
-                Log.i("woodpecker", String.valueOf(prog));
+                Log.i("woodpecker", String.valueOf(prog) + "%    -    " + progress + "/" + totalSize);
             }
         };
         return new UploadRequest("123",stream1, stream2, wpl);
