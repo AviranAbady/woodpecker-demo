@@ -5,10 +5,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.aviran.woodpecker.Woodpecker;
 import org.aviran.woodpecker.WoodpeckerError;
+import org.aviran.woodpecker.WoodpeckerFileStream;
+import org.aviran.woodpecker.WoodpeckerProgressListener;
 import org.aviran.woodpecker.WoodpeckerResponse;
 import org.aviran.woodpecker.WoodpeckerSettings;
 import org.aviran.woodpeckerapp.model.ItemRequest;
@@ -17,7 +20,9 @@ import org.aviran.woodpeckerapp.model.ListRequest;
 import org.aviran.woodpeckerapp.model.LoginRequest;
 import org.aviran.woodpeckerapp.model.LoginResponse;
 import org.aviran.woodpeckerapp.model.ReviewRequest;
+import org.aviran.woodpeckerapp.model.UploadRequest;
 
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView textView;
     private Button button;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         textView = (TextView) findViewById(R.id.textView);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         button = (Button) findViewById(R.id.runButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +92,13 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(String response) {
                         printLog("Review request successful, response is:\n" + response);
+                    }
+                })
+                .request(getFileUploadRequest())
+                .then(new WoodpeckerResponse<String>() {
+                    @Override
+                    public void onSuccess(String response) {
+                        printLog("file upload successful!\n");
                         button.setEnabled(true);
                     }
                 })
@@ -92,9 +106,25 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onError(WoodpeckerResponse response) {
                         Log.e("WP", "ERROR");
-                        button.setEnabled(true);
                     }
                 });
+    }
+
+
+    public UploadRequest getFileUploadRequest() {
+        InputStream inputStream = getResources().openRawResource(R.raw.image1);
+        InputStream inputStream2 = getResources().openRawResource(R.raw.car);
+        WoodpeckerFileStream stream1 =  new WoodpeckerFileStream("image1.png", inputStream);
+        WoodpeckerFileStream stream2 =  new WoodpeckerFileStream("car.jpg", inputStream2);
+        WoodpeckerProgressListener wpl = new WoodpeckerProgressListener() {
+            @Override
+            public void onProgress(String name, int progress, int totalSize) {
+                int prog = 100*progress/totalSize;
+                progressBar.setProgress(prog);
+                Log.i("woodpecker", String.valueOf(prog));
+            }
+        };
+        return new UploadRequest("123",stream1, stream2, wpl);
     }
 
     private void printLog(String log) {
