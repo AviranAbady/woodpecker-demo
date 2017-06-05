@@ -5,10 +5,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.aviran.woodpecker.Woodpecker;
 import org.aviran.woodpecker.WoodpeckerError;
+import org.aviran.woodpecker.WoodpeckerFileStream;
+import org.aviran.woodpecker.WoodpeckerProgressListener;
 import org.aviran.woodpecker.WoodpeckerResponse;
 import org.aviran.woodpecker.WoodpeckerSettings;
 import org.aviran.woodpeckerapp.model.ItemRequest;
