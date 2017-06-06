@@ -1,4 +1,4 @@
-package org.aviran.woodpeckerapp;
+package org.aviran.woodpeckerdemo;
 
 import org.junit.Test;
 

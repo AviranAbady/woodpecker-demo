@@ -1,4 +1,4 @@
-package org.aviran.woodpeckerapp;
+package org.aviran.woodpeckerdemo;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,14 +14,14 @@ import org.aviran.woodpecker.WoodpeckerFileStream;
 import org.aviran.woodpecker.WoodpeckerProgressListener;
 import org.aviran.woodpecker.WoodpeckerResponse;
 import org.aviran.woodpecker.WoodpeckerSettings;
-import org.aviran.woodpeckerapp.model.ItemRequest;
-import org.aviran.woodpeckerapp.model.ItemResponse;
-import org.aviran.woodpeckerapp.model.ListRequest;
-import org.aviran.woodpeckerapp.model.LoginRequest;
-import org.aviran.woodpeckerapp.model.LoginResponse;
-import org.aviran.woodpeckerapp.model.ReviewRequest;
-import org.aviran.woodpeckerapp.model.UploadRequest;
-import org.aviran.woodpeckerapp.model.UploadResponse;
+import org.aviran.woodpeckerdemo.model.ItemRequest;
+import org.aviran.woodpeckerdemo.model.ItemResponse;
+import org.aviran.woodpeckerdemo.model.ListRequest;
+import org.aviran.woodpeckerdemo.model.LoginRequest;
+import org.aviran.woodpeckerdemo.model.LoginResponse;
+import org.aviran.woodpeckerdemo.model.ReviewRequest;
+import org.aviran.woodpeckerdemo.model.UploadRequest;
+import org.aviran.woodpeckerdemo.model.UploadResponse;
 
 import java.io.InputStream;
 import java.util.Arrays;
@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         log = new StringBuilder();
-
         logTextView = (TextView) findViewById(R.id.log_textView);
         progressTextView = (TextView) findViewById(R.id.progress_textView);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -141,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
                 progressTextView.setText(text);
             }
         };
+
         return new UploadRequest("123", stream1, stream2, wpl);
     }
 

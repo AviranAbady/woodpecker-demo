@@ -1,4 +1,4 @@
-package org.aviran.woodpeckerapp;
+package org.aviran.woodpeckerdemo;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

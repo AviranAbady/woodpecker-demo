@@ -1,7 +1,6 @@
-package org.aviran.woodpeckerapp.model;
+package org.aviran.woodpeckerdemo.model;
 
 import org.aviran.woodpecker.WoodpeckerRequest;
-import org.aviran.woodpecker.annotations.Get;
 import org.aviran.woodpecker.annotations.Param;
 import org.aviran.woodpecker.annotations.Post;
 

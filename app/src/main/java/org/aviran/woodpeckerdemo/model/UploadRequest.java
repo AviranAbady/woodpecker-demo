@@ -1,6 +1,5 @@
-package org.aviran.woodpeckerapp.model;
+package org.aviran.woodpeckerdemo.model;
 
-import org.aviran.woodpecker.Woodpecker;
 import org.aviran.woodpecker.WoodpeckerFileStream;
 import org.aviran.woodpecker.WoodpeckerProgressListener;
 import org.aviran.woodpecker.WoodpeckerRequest;

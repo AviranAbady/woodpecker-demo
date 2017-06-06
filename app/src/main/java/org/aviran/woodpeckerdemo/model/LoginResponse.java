@@ -1,4 +1,4 @@
-package org.aviran.woodpeckerapp.model;
+package org.aviran.woodpeckerdemo.model;
 
 /**
  * Created by aviran on 30/05/17.
