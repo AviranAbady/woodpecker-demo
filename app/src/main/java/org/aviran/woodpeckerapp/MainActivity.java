@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                textView.setText("");
                 button.setEnabled(false);
                 runDemo();
             }
@@ -101,8 +100,9 @@ public class MainActivity extends AppCompatActivity {
                 .then(new WoodpeckerResponse<String>() {
                     @Override
                     public void onSuccess(String response) {
-                        printLog("file upload successful!\n");
+                        printLog("file upload successful!");
                         button.setEnabled(true);
+                        printLog("========================================");
                     }
                 })
                 .error(new WoodpeckerError() {
