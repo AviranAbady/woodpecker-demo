@@ -21,17 +21,20 @@ import org.aviran.woodpeckerapp.model.LoginRequest;
 import org.aviran.woodpeckerapp.model.LoginResponse;
 import org.aviran.woodpeckerapp.model.ReviewRequest;
 import org.aviran.woodpeckerapp.model.UploadRequest;
+import org.aviran.woodpeckerapp.model.UploadResponse;
 
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView textView;
+    private TextView logTextView;
     private Button button;
     private ProgressBar progressBar;
     private StringBuilder log;
+    private TextView progressTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,13 +43,15 @@ public class MainActivity extends AppCompatActivity {
 
         log = new StringBuilder();
 
-        textView = (TextView) findViewById(R.id.textView);
+        logTextView = (TextView) findViewById(R.id.log_textView);
+        progressTextView = (TextView) findViewById(R.id.progress_textView);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         button = (Button) findViewById(R.id.runButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 button.setEnabled(false);
+                button.setText(R.string.runnning);
                 runDemo();
             }
         });
@@ -97,11 +102,13 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .request(getFileUploadRequest())
-                .then(new WoodpeckerResponse<String>() {
+                .then(new WoodpeckerResponse<UploadResponse>() {
                     @Override
-                    public void onSuccess(String response) {
-                        printLog("file upload successful!");
+                    public void onSuccess(UploadResponse response) {
+                        printLog(response.getMsg());
+                        printLog(response.getUrl());
                         button.setEnabled(true);
+                        button.setText(R.string.run_requests);
                         printLog("========================================");
                     }
                 })
@@ -110,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onError(WoodpeckerResponse response) {
                         Log.e("WP", "ERROR");
                         button.setEnabled(true);
+                        button.setText(R.string.run_requests);
                     }
                 });
     }
@@ -118,21 +126,27 @@ public class MainActivity extends AppCompatActivity {
     public UploadRequest getFileUploadRequest() {
         InputStream inputStream = getResources().openRawResource(R.raw.image1);
         InputStream inputStream2 = getResources().openRawResource(R.raw.car);
-        WoodpeckerFileStream stream1 =  new WoodpeckerFileStream("image1.png", inputStream);
-        WoodpeckerFileStream stream2 =  new WoodpeckerFileStream("car.jpg", inputStream2);
+        WoodpeckerFileStream stream1 = new WoodpeckerFileStream("image1.png", inputStream);
+        WoodpeckerFileStream stream2 = new WoodpeckerFileStream("car.jpg", inputStream2);
         WoodpeckerProgressListener wpl = new WoodpeckerProgressListener() {
             @Override
             public void onProgress(String name, int progress, int totalSize) {
-                int prog = 100*progress/totalSize;
-                progressBar.setProgress(prog);
-                Log.i("woodpecker", String.valueOf(prog) + "%    -    " + progress + "/" + totalSize);
+                int percentage = 100 * progress / totalSize;
+                progressBar.setProgress(percentage);
+                String text = String.format(Locale.getDefault(),
+                        "%d%%  -  %,d / %,d   (kb)",
+                        percentage,
+                        progress / 1024,
+                        totalSize / 1024);
+                progressTextView.setText(text);
             }
         };
-        return new UploadRequest("123",stream1, stream2, wpl);
+        return new UploadRequest("123", stream1, stream2, wpl);
     }
 
     private void printLog(String text) {
-        log.append(text).append("\n\n");
-        textView.setText(log.toString());
+        log.append(text);
+        logTextView.setText(log.toString());
+        log.append("\n\n");
     }
 }
