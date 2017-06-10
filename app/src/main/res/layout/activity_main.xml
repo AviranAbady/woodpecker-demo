@@ -36,7 +36,7 @@
 
             <TextView
                 android:textStyle="bold"
-                android:text="@string/upload_progress"
+                android:text="@string/progress"
                 android:gravity="center"
                 android:id="@+id/progress_textView"
                 android:layout_width="match_parent"

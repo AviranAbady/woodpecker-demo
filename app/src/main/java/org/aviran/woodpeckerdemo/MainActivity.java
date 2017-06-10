@@ -14,6 +14,7 @@ import org.aviran.woodpecker.WoodpeckerFileStream;
 import org.aviran.woodpecker.WoodpeckerProgressListener;
 import org.aviran.woodpecker.WoodpeckerResponse;
 import org.aviran.woodpecker.WoodpeckerSettings;
+import org.aviran.woodpeckerdemo.model.DownloadFileRequest;
 import org.aviran.woodpeckerdemo.model.ItemRequest;
 import org.aviran.woodpeckerdemo.model.ItemResponse;
 import org.aviran.woodpeckerdemo.model.ListRequest;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private StringBuilder log;
     private TextView progressTextView;
+    private WoodpeckerProgressListener progressListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,12 +56,30 @@ public class MainActivity extends AppCompatActivity {
                 runDemo();
             }
         });
+        progressListener = createProgressListener();
 
         // Initialize woodpecker with a base url
         Woodpecker.initialize(new WoodpeckerSettings("http://woodpecker.aviran.org"));
     }
 
+    private WoodpeckerProgressListener createProgressListener() {
+        return new WoodpeckerProgressListener() {
+            @Override
+            public void onProgress(String name, int progress, int totalSize) {
+                int percentage = 100 * progress / totalSize;
+                progressBar.setProgress(percentage);
+                String text = String.format(Locale.getDefault(),
+                        "%d%%  -  %,d / %,d   (kb)",
+                        percentage,
+                        progress / 1024,
+                        totalSize / 1024);
+                progressTextView.setText(text);
+            }
+        };
+    }
+
     private void runDemo() {
+
         // POST  login           /login?username=user&password=password
         // GET   list            /list?page=1&pageSize=10
         // GET   item            /item/{id}
@@ -100,7 +120,14 @@ public class MainActivity extends AppCompatActivity {
                         printLog("Review request successful, response is:\n" + response);
                     }
                 })
-                .request(getFileUploadRequest())
+                .request(new DownloadFileRequest(progressListener))
+                .then(new WoodpeckerResponse<InputStream>() {
+                    @Override
+                    public void onSuccess(InputStream response) {
+                        printLog("file downloaded successfully");
+                    }
+                })
+                .request(createFileUploadRequest())
                 .then(new WoodpeckerResponse<UploadResponse>() {
                     @Override
                     public void onSuccess(UploadResponse response) {
@@ -121,27 +148,12 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-
-    public UploadRequest getFileUploadRequest() {
-        InputStream inputStream = getResources().openRawResource(R.raw.image1);
-        InputStream inputStream2 = getResources().openRawResource(R.raw.car);
-        WoodpeckerFileStream stream1 = new WoodpeckerFileStream("image1.png", inputStream);
-        WoodpeckerFileStream stream2 = new WoodpeckerFileStream("car.jpg", inputStream2);
-        WoodpeckerProgressListener wpl = new WoodpeckerProgressListener() {
-            @Override
-            public void onProgress(String name, int progress, int totalSize) {
-                int percentage = 100 * progress / totalSize;
-                progressBar.setProgress(percentage);
-                String text = String.format(Locale.getDefault(),
-                        "%d%%  -  %,d / %,d   (kb)",
-                        percentage,
-                        progress / 1024,
-                        totalSize / 1024);
-                progressTextView.setText(text);
-            }
-        };
-
-        return new UploadRequest("123", stream1, stream2, wpl);
+    public UploadRequest createFileUploadRequest() {
+        InputStream inputStream = getResources().openRawResource(R.raw.car);
+        InputStream inputStream2 = getResources().openRawResource(R.raw.android);
+        WoodpeckerFileStream stream1 = new WoodpeckerFileStream("file1", inputStream);
+        WoodpeckerFileStream stream2 = new WoodpeckerFileStream("file2", inputStream2);
+        return new UploadRequest("uploadToken", stream1, stream2, progressListener);
     }
 
     private void printLog(String text) {
