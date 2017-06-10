@@ -79,7 +79,7 @@ Woodpecker
 ```java
 @Post("/login")
 public class LoginRequest extends WoodpeckerRequest {
-    @Param
+    @Param // @Param used to define 'username' as a request data parameter
     private String username;
 
     @Param
@@ -91,6 +91,7 @@ public class LoginRequest extends WoodpeckerRequest {
     }
 }
 
+// POJO structure to the response of LoginRequest
 public class LoginResponse {
     private String token;
 
@@ -100,43 +101,7 @@ public class LoginResponse {
 }
 ```
 
-### List api call is defined by the following request/response classes
-```java
-@Get("/list")
-public class ListRequest extends WoodpeckerRequest {
-    @Param
-    private int page;
-
-    @Param
-    private int pageSize;
-
-    public ListRequest(int page, int pageSize) {
-        this.page = page;
-        this.pageSize = pageSize;
-    }
-}
-
-public class ItemResponse {
-    private int id;
-    private String name;
-    private int[] values;
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int[] getValues() {
-        return values;
-    }
-}
-
-```
-
-### Item api call - Demonstrating using url path variable
+### Item api call - Demonstrating usage of url path variable
 ```java
 @Get("/item/{id}")
 public class ItemRequest extends WoodpeckerRequest {
@@ -153,10 +118,12 @@ public class ItemRequest extends WoodpeckerRequest {
 }
 ```
 
-### Review api call - Demonstrating posting JSON body (no parameters)
+### Review api call - Demonstrating posting JSON body
 ```java
 @Post("/review")
 public class ReviewRequest extends WoodpeckerRequest {
+    // @Param is not used in this class, therefore class structure
+    // will be serialized ot json, and will be sent as request body.
     private int itemId;
     private String name;
     private String text;
@@ -165,6 +132,30 @@ public class ReviewRequest extends WoodpeckerRequest {
         this.itemId = itemId;
         this.name = name;
         this.text = text;
+    }
+}
+```
+
+### GET'ing binary file, with download progress tracking
+```java
+// Progress listener that will be supplied to the request,
+// will be executed on the UI Thread.
+progressListener = new WoodpeckerProgressListener() {
+    @Override
+    public void onProgress(String name, int progress, int totalSize) {
+        // log progress / totalSize
+    }
+}
+
+// By use the @Progress annotation, this request will invoke progress
+// notification calls to the supplied listener
+@Get("/woodpecker.jpg")
+public class DownloadFileRequest extends WoodpeckerRequest {
+    @Progress
+    WoodpeckerProgressListener progressListener;
+
+    public DownloadFileRequest(WoodpeckerProgressListener progressListener) {
+        this.progressListener = progressListener;
     }
 }
 ```
