@@ -55,13 +55,13 @@ Woodpecker
       @Override
       public void onSuccess(String response) {
       }
-  })      // GET /image.png - request with progress listener
+  })      // GET /image.png - request with progress tracking
   .request(new DownloadFileRequest(progressListener))
   .then(new WoodpeckerResponse<InputStream>() {
       @Override
       public void onSuccess(InputStream response) {
       }
-  })      // POST multipart data - 2 files uploaded
+  })      // POST multipart data - 2 files uploaded, progress tracking
   .request(createFileUploadRequest())
   .then(new WoodpeckerResponse<UploadResponse>() {
       @Override
