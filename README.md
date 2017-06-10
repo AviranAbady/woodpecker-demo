@@ -123,7 +123,7 @@ public class ItemRequest extends WoodpeckerRequest {
 @Post("/review")
 public class ReviewRequest extends WoodpeckerRequest {
     // @Param is not used in this class, therefore class structure
-    // will be serialized ot json, and will be sent as request body.
+    // will be serialized to json, and will be sent as request body.
     private int itemId;
     private String name;
     private String text;
