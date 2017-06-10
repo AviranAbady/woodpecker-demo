@@ -3,8 +3,8 @@
 <a href="https://github.com/AviranAbady/woodpecker">woodpecker</a> is an experimental lean network manager<br/>
 
 ### Integrate
-```
-compile 'org.aviran.woodpecker:woodpecker:0.0.3'
+```gradle
+compile 'org.aviran.woodpecker:woodpecker:0.9.1'
 ```
 
 <img src="http://i.imgur.com/35jFhoU.gif"/>
@@ -15,51 +15,65 @@ compile 'org.aviran.woodpecker:woodpecker:0.0.3'
 // Initialize Woodpecker
 Woodpecker.initialize(new WoodpeckerSettings("http://woodpecker.aviran.org"));
 
-// Run the following 4 request, one after the other.
 
-// POST  login   /login?username=user&password=password
-// GET   list    /list?page=1&pageSize=10
-// GET   item    /item/{id}
-// POST  review  { itemId: id, name: Aviran, review: This is awesome }
+// Run the following 6 requests, consecutively, passing data from one to the other.
 
+// POST  login    /login - post body: username=user&password=password
+// GET   list     /list?page=1&pageSize=10
+// GET   item     /item/{id}
+// POST  review   /review - post body: { name: Aviran, review: This is awesome }
+// GET   get      /image.png - download binary file
+// PUT   upload   /upload - upload binary image file
 
 Woodpecker
-.begin()
-.request(new LoginRequest("aviran", "12345"))
-.then(new WoodpeckerResponse<LoginResponse>() {
-    @Override
-    public void onSuccess(LoginResponse response) {
-        Woodpecker.getSettings().addHeader("token", response.getToken());
-    }
-})
-.request(new ListRequest(1, 10))
-.then(new WoodpeckerResponse<List<ItemResponse>>() {
-    @Override
-    public void onSuccess(List<ItemResponse> response) {
-        ItemRequest itemRequest = (ItemRequest) getNextRequest();
-        itemRequest.setId(response.get(0).getId());
-    }
-})
-.request(new ItemRequest(-1))
-.then(new WoodpeckerResponse<ItemResponse>() {
-    @Override
-    public void onSuccess(ItemResponse response) {
-        Log.i("WP", response.toString());
-    }
-})
-.request(new ReviewRequest(1, "Aviran", "This is awesome!"))
-.then(new WoodpeckerResponse<String>() {
-    @Override
-    public void onSuccess(String response) {
-        Log.i("WP", response.toString());
-    }
-})
-.error(new WoodpeckerError() {
-    @Override
-    public void onError(WoodpeckerResponse response) {
-        Log.e("WP", "ERROR");
-    }
-});
+  .begin()  // POST /login
+  .request(new LoginRequest("username", "p@ssw0rd"))
+  .then(new WoodpeckerResponse<LoginResponse>() {
+      @Override
+      public void onSuccess(LoginResponse response) {
+          // Update authentication token for the follwing requests
+          Woodpecker.getSettings().addHeader("token", response.getToken());
+      }
+  })       // GET /list?page=1&pageSize=10
+  .request(new ListRequest(1, 10))
+  .then(new WoodpeckerResponse<List<ItemResponse>>() {
+      @Override
+      public void onSuccess(List<ItemResponse> response) {
+          // Get next request object
+          ItemRequest itemRequest = (ItemRequest) getNextRequest();
+          // Update it
+          itemRequest.setId(response.get(0).getId());
+      }
+  })      // GET /item/{id}
+  .request(new ItemRequest(-1))
+  .then(new WoodpeckerResponse<ItemResponse>() {
+      @Override
+      public void onSuccess(ItemResponse response) {
+      }
+  })      // POST /review  - JSON encoded post
+  .request(new ReviewRequest(1, "Aviran", "This is awesome!"))
+  .then(new WoodpeckerResponse<String>() {
+      @Override
+      public void onSuccess(String response) {
+      }
+  })      // GET /image.png - request with progress listener
+  .request(new DownloadFileRequest(progressListener))
+  .then(new WoodpeckerResponse<InputStream>() {
+      @Override
+      public void onSuccess(InputStream response) {
+      }
+  })      // POST multipart data - 2 files uploaded
+  .request(createFileUploadRequest())
+  .then(new WoodpeckerResponse<UploadResponse>() {
+      @Override
+      public void onSuccess(UploadResponse response) {
+      }
+  })     // Error handler for the entire chain
+  .error(new WoodpeckerError() {
+      @Override
+      public void onError(WoodpeckerResponse response) {
+      }
+  });
 ```
 
 ### Login api call is defined by the following request/response classes

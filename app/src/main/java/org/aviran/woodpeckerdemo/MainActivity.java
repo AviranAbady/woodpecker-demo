@@ -79,11 +79,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void runDemo() {
+        // Run the following 6 requests, consecutively,
+        // passing data from one to the other.
 
-        // POST  login           /login?username=user&password=password
-        // GET   list            /list?page=1&pageSize=10
-        // GET   item            /item/{id}
-        // POST  review          { itemId: id, name: Aviran, review: This is awesome }
+        // POST  login    /login - post body: username=user&password=password
+        // GET   list     /list?page=1&pageSize=10
+        // GET   item     /item/{id}
+        // POST  review   /review - post body: { name: Aviran, review: This is awesome }
+        // GET   get      /image.png - download binary file
+        // PUT   upload   /upload - upload binary image file
+
         Woodpecker
                 .begin()
                 .request(new LoginRequest("aviran", "12345"))
