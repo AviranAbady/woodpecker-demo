@@ -15,7 +15,6 @@ compile 'org.aviran.woodpecker:woodpecker:0.9.1'
 // Initialize Woodpecker
 Woodpecker.initialize(new WoodpeckerSettings("http://woodpecker.aviran.org"));
 
-
 // Run the following 6 requests, consecutively, passing data from one to the other.
 
 // POST  login    /login - post body: username=user&password=password
@@ -44,7 +43,7 @@ Woodpecker
           // Update it
           itemRequest.setId(response.get(0).getId());
       }
-  })      // GET /item/{id}
+  })      // GET /item/{id}   - id is updated in run time by previous request
   .request(new ItemRequest(-1))
   .then(new WoodpeckerResponse<ItemResponse>() {
       @Override
