@@ -159,3 +159,31 @@ public class DownloadFileRequest extends WoodpeckerRequest {
     }
 }
 ```
+
+### POST multipart, with upload progress tracking
+```java
+@Post("/upload")
+public class UploadRequest extends WoodpeckerRequest {
+    @Param
+    private String uploadToken;
+
+    @File
+    private WoodpeckerFileStream fileUpload;
+
+    @File
+    private WoodpeckerFileStream anotherFileUpload;
+
+    @Progress
+    private WoodpeckerProgressListener progressListener;
+
+    public UploadRequest(String uploadToken,
+                         WoodpeckerFileStream fileUpload,
+                         WoodpeckerFileStream anotherFileUpload,
+                         WoodpeckerProgressListener progressListener) {
+        this.uploadToken = uploadToken;
+        this.fileUpload = fileUpload;
+        this.anotherFileUpload = anotherFileUpload;
+        this.progressListener = progressListener;
+    }
+}
+```
